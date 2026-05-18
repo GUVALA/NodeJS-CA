@@ -1,0 +1,12 @@
+{
+  "name": "global-kitchen",
+  "version": "1.0.0",
+  "description": "Global Kitchen API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
