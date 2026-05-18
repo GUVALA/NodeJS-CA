@@ -1,61 +1,30 @@
-const Recipe = require("../models/Recipe");
+const express = require("express");
+const dotenv = require("dotenv");
 
-// Get all recipes
-const getAllRecipes = async (category) => {
+const connectDB = require("./config/db");
+const recipeRoutes = require("./routes/recipeRoutes");
+const errorHandler = require("./middleware/errorHandler");
 
-    let filter = {};
+// Load environment variables
+dotenv.config();
 
-    if (category) {
-        filter.category = category;
-    }
+// Connect to database
+connectDB();
 
-    return await Recipe.find(filter);
-};
+const app = express();
 
-// Create recipe
-const createRecipe = async (recipeData) => {
+// Middleware
+app.use(express.json());
 
-    if (recipeData.cookingTime <= 0) {
-        throw new Error(
-            "Cooking time must be positive"
-        );
-    }
+// Routes
+app.use("/api/recipes", recipeRoutes);
 
-    return await Recipe.create(recipeData);
-};
+// Error Handler (must be last)
+app.use(errorHandler);
 
-// Update recipe
-const updateRecipe = async (id, data) => {
+// Start server
+const PORT = process.env.PORT || 5000;
 
-    const recipe = await Recipe.findByIdAndUpdate(
-        id,
-        data,
-        { new: true, runValidators: true }
-    );
-
-    if (!recipe) {
-        throw new Error("Recipe not found");
-    }
-
-    return recipe;
-};
-
-// Delete recipe
-const deleteRecipe = async (id) => {
-
-    const recipe =
-        await Recipe.findByIdAndDelete(id);
-
-    if (!recipe) {
-        throw new Error("Recipe not found");
-    }
-
-    return recipe;
-};
-
-module.exports = {
-    getAllRecipes,
-    createRecipe,
-    updateRecipe,
-    deleteRecipe
-};
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
